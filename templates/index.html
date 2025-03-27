@@ -44,7 +44,7 @@
                 {% for product in products.items %}
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                     <div class="aspect-w-16 aspect-h-9">
-                        <img src="{{ url_for('static', filename=product.image_url.replace('static/', '')) }}" 
+                        <img src="{{ url_for('static', filename='images/' + product.image_url.split('/')[-1]) }}" 
                              alt="{{ t('products.items.' + product.name + '.name') }}" 
                              class="w-full h-64 object-cover">
                     </div>
