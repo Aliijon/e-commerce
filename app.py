@@ -121,7 +121,8 @@ def get_translation(key):
 def utility_processor():
     return {
         'get_translation': get_translation,
-        't': get_translation  # Add a shorter alias
+        't': get_translation,  # Add a shorter alias
+        'get_language': get_language  # Add get_language to template context
     }
 
 @app.route('/set_language/<lang>')
