@@ -39,6 +39,8 @@ class Product(db.Model):
     stock = db.Column(db.Integer, nullable=False, default=0)
     image_url = db.Column(db.String(200))
     category = db.Column(db.String(50))
+    contact_whatsapp = db.Column(db.String(200))
+    contact_telegram = db.Column(db.String(200))
     
     # Relationships
     favorited_by = db.relationship('Favorite', backref='product', lazy=True)

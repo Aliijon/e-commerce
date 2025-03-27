@@ -42,6 +42,8 @@ translations = {
             'out_of_stock': 'Out of Stock',
             'search': 'Search products...',
             'no_results': 'No products found',
+            'contact_whatsapp': 'Contact on WhatsApp',
+            'contact_telegram': 'Contact on Telegram',
             'categories': {
                 'title': 'Categories',
                 'all': 'All Products',
@@ -277,6 +279,8 @@ translations = {
             'out_of_stock': 'ناموجود',
             'search': 'جستجوی محصولات...',
             'no_results': 'محصولی یافت نشد',
+            'contact_whatsapp': 'تماس در واتساپ',
+            'contact_telegram': 'تماس در تلگرام',
             'categories': {
                 'title': 'دسته‌بندی‌ها',
                 'all': 'همه محصولات',

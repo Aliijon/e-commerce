@@ -51,7 +51,9 @@ def add_sample_data():
             'price': 89.99,
             'stock': 10,
             'image_url': 'images/IMG-20241118-WA0023.jpg',
-            'category': 'shoes'
+            'category': 'shoes',
+            'contact_whatsapp': 'https://wa.me/93771749100',
+            'contact_telegram': 'https://t.me/Alijanelyasi'
         },
         {
             'name': 'sports_shoe_2',
@@ -59,7 +61,9 @@ def add_sample_data():
             'price': 129.99,
             'stock': 8,
             'image_url': 'images/IMG-20241118-WA0017.jpg',
-            'category': 'shoes'
+            'category': 'shoes',
+            'contact_whatsapp': 'https://wa.me/YOUR_PHONE_NUMBER',
+            'contact_telegram': 'https://t.me/YOUR_TELEGRAM_USERNAME'
         },
         {
             'name': 'sports_shirt_1',
@@ -67,7 +71,9 @@ def add_sample_data():
             'price': 34.99,
             'stock': 15,
             'image_url': 'images/IMG-20241014-WA0032.jpg',
-            'category': 'clothing'
+            'category': 'clothing',
+            'contact_whatsapp': 'https://wa.me/YOUR_PHONE_NUMBER',
+            'contact_telegram': 'https://t.me/YOUR_TELEGRAM_USERNAME'
         },
         # Add more sample products as needed
     ]

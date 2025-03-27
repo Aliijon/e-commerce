@@ -73,6 +73,14 @@
                             <span class="text-xl font-bold text-blue-600 dark:text-blue-400">${{ "%.2f"|format(product.price) }}</span>
                             <span class="text-sm text-gray-500 dark:text-gray-400">{{ t('products.categories.' + product.category) }}</span>
                         </div>
+                        <div class="mt-4 flex space-x-2 rtl-reverse">
+                            <a href="{{ product.contact_whatsapp }}" target="_blank" class="flex-1 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none text-center">
+                                <i class="fab fa-whatsapp mr-2"></i>{{ t('products.contact_whatsapp') }}
+                            </a>
+                            <a href="{{ product.contact_telegram }}" target="_blank" class="flex-1 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none text-center">
+                                <i class="fab fa-telegram mr-2"></i>{{ t('products.contact_telegram') }}
+                            </a>
+                        </div>
                         {% if product.stock > 0 %}
                         <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mt-4">
                             <div class="flex items-center space-x-2 rtl-reverse">
