@@ -8,23 +8,20 @@ def init_routes(app):
     @app.route('/')
     @cache.cached(timeout=300)  # Cache for 5 minutes
     def index():
-        page = request.args.get('page', 1, type=int)
-        per_page = 16
-        category = request.args.get('category', None)
-
-        # Base query
+        # Get all products without pagination
         query = Product.query
 
         # Apply category filter if specified
+        category = request.args.get('category', None)
         if category:
             query = query.filter_by(category=category)
 
+        # Get all products at once
+        products = query.all()
+        
         # Get all unique categories for the sidebar
         categories = db.session.query(Product.category).distinct().all()
         categories = [cat[0] for cat in categories]
-
-        # Apply pagination
-        products = query.paginate(page=page, per_page=per_page, error_out=False)
         
         favorite_ids = []
         if current_user.is_authenticated:

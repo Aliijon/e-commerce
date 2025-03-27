@@ -19,29 +19,9 @@
         }
     </script>
     <style>
-        body {
-            background-image: url('/static/images/sports-balls-background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: -1;
-        }
-
         .content-container {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.98);
             border-radius: 0.5rem;
-            backdrop-filter: blur(5px);
         }
 
         [dir="rtl"] .rtl-reverse {
@@ -87,9 +67,20 @@
         .telegram-btn:hover {
             background-color: #0088cc;
         }
+
+        /* Lazy loading styles */
+        .lazy-load {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .lazy-load.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-gray-50">
     <!-- Navigation -->
     <nav class="bg-primary shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
