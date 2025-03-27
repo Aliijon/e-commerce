@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_login import current_user, LoginManager
 from config import Config
-from extensions import db, migrate, login_manager, init_login_manager
+from extensions import db, migrate, login_manager, init_login_manager, cache
 from translations import translations
 from models import Product, User
 from flask_sqlalchemy import SQLAlchemy
@@ -14,6 +14,11 @@ load_dotenv()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    
+    # Cache configuration
+    app.config['CACHE_TYPE'] = 'SimpleCache'
+    app.config['CACHE_DEFAULT_TIMEOUT'] = 300  # 5 minutes default timeout
+    cache.init_app(app)
 
     # Initialize extensions
     db.init_app(app)
@@ -62,8 +67,8 @@ def add_sample_data():
             'stock': 8,
             'image_url': 'images/IMG-20241118-WA0017.jpg',
             'category': 'shoes',
-            'contact_whatsapp': 'https://wa.me/YOUR_PHONE_NUMBER',
-            'contact_telegram': 'https://t.me/YOUR_TELEGRAM_USERNAME'
+            'contact_whatsapp': 'https://wa.me/93771749100',
+            'contact_telegram': 'https://t.me/Alijanelyasi'
         },
         {
             'name': 'sports_shirt_1',
@@ -72,10 +77,9 @@ def add_sample_data():
             'stock': 15,
             'image_url': 'images/IMG-20241014-WA0032.jpg',
             'category': 'clothing',
-            'contact_whatsapp': 'https://wa.me/YOUR_PHONE_NUMBER',
-            'contact_telegram': 'https://t.me/YOUR_TELEGRAM_USERNAME'
-        },
-        # Add more sample products as needed
+            'contact_whatsapp': 'https://wa.me/93771749100',
+            'contact_telegram': 'https://t.me/Alijanelyasi'
+        }
     ]
 
     for product_data in products:
@@ -124,6 +128,8 @@ def utility_processor():
 def set_language(lang):
     if lang in translations:
         session['language'] = lang
+        # Clear cache when language changes
+        cache.clear()
     return redirect(request.referrer or url_for('index'))
 
 if __name__ == '__main__':

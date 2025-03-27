@@ -1,11 +1,12 @@
 from flask import render_template, redirect, url_for, flash, request, session
 from flask_login import login_required, current_user
-from extensions import db
+from extensions import db, cache
 from models import Product, Order, OrderItem, Favorite
 from search_utils import search_engine
 
 def init_routes(app):
     @app.route('/')
+    @cache.cached(timeout=300)  # Cache for 5 minutes
     def index():
         page = request.args.get('page', 1, type=int)
         per_page = 16
@@ -36,6 +37,7 @@ def init_routes(app):
                              current_category=category)
 
     @app.route('/search')
+    @cache.cached(timeout=60)  # Cache for 1 minute
     def search():
         query = request.args.get('q', '')
         if not query:
@@ -103,22 +105,12 @@ def init_routes(app):
 
     @app.route('/cart/update/<int:product_id>', methods=['POST'])
     def update_cart(product_id):
-        quantity = int(request.form.get('quantity', 0))
-        if 'cart' not in session:
-            session['cart'] = {}
-        
-        if quantity > 0:
-            product = Product.query.get_or_404(product_id)
-            if quantity > product.stock:
-                flash('Not enough stock available')
-            else:
+        if 'cart' in session:
+            quantity = request.form.get('quantity', type=int)
+            if quantity and quantity > 0:
                 session['cart'][str(product_id)] = quantity
-                flash('Cart updated successfully')
-        else:
-            session['cart'].pop(str(product_id), None)
-            flash('Item removed from cart')
-        
-        session.modified = True
+                session.modified = True
+                cache.clear()  # Clear cache when cart is updated
         return redirect(url_for('cart'))
 
     @app.route('/cart/remove/<int:product_id>')
@@ -126,7 +118,7 @@ def init_routes(app):
         if 'cart' in session:
             session['cart'].pop(str(product_id), None)
             session.modified = True
-            flash('Item removed from cart')
+            cache.clear()  # Clear cache when cart is modified
         return redirect(url_for('cart'))
 
     @app.route('/favorites')
@@ -152,22 +144,20 @@ def init_routes(app):
             flash('Added to favorites')
 
         db.session.commit()
+        cache.clear()  # Clear cache when favorites are modified
         return redirect(request.referrer or url_for('index'))
 
     @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
     def add_to_cart(product_id):
-        product = Product.query.get_or_404(product_id)
-        quantity = int(request.form.get('quantity', 1))
+        if 'cart' not in session:
+            session['cart'] = {}
         
-        if quantity > product.stock:
-            flash('Not enough stock available')
-            return redirect(url_for('index'))
-            
-        cart = session.get('cart', {})
-        cart[str(product_id)] = cart.get(str(product_id), 0) + quantity
-        session['cart'] = cart
-        flash('Added to cart successfully')
-        return redirect(request.referrer or url_for('index'))
+        quantity = request.form.get('quantity', type=int, default=1)
+        if quantity and quantity > 0:
+            session['cart'][str(product_id)] = session['cart'].get(str(product_id), 0) + quantity
+            session.modified = True
+            cache.clear()  # Clear cache when cart is modified
+        return redirect(url_for('cart'))
 
     @app.route('/place_order', methods=['POST'])
     @login_required
@@ -207,6 +197,7 @@ def init_routes(app):
             
             # Commit the transaction
             db.session.commit()
+            cache.clear()  # Clear cache when order is placed
             flash('Order placed successfully!')
             return redirect(url_for('index'))
             
