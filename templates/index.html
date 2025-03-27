@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-gray-800 dark:text-white">{{ t('products.title') }}</h1>
+</div>
+
+<div class="container mx-auto px-4">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Category Sidebar - Now sticky and scrollable -->
+        <div class="lg:w-1/4">
+            <div class="sticky top-4">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                    <!-- Category Toggle Button -->
+                    <button id="categoryToggle" 
+                            class="w-full flex justify-between items-center text-xl font-semibold mb-4 text-gray-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none">
+                        <span>{{ t('products.categories.title') }}</span>
+                        <svg id="categoryIcon" class="w-6 h-6 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <!-- Category List - Now in a scrollable container -->
+                    <div id="categoryList" class="overflow-y-auto max-h-[calc(100vh-16rem)] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                        <div class="space-y-2 pr-2">
+                            <a href="{{ url_for('index') }}" 
+                               class="block px-4 py-2 rounded-md {% if not current_category %}bg-blue-100 dark:bg-blue-900{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %} text-gray-800 dark:text-white">
+                                {{ t('products.categories.all') }}
+                            </a>
+                            {% for category in categories %}
+                            <a href="{{ url_for('index', category=category) }}" 
+                               class="block px-4 py-2 rounded-md {% if current_category == category %}bg-blue-100 dark:bg-blue-900{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %} text-gray-800 dark:text-white">
+                                {{ t('products.categories.' + category) }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="lg:w-3/4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for product in products.items %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                    <div class="aspect-w-16 aspect-h-9">
+                        <img src="{{ url_for('static', filename=product.image_url.replace('static/', '')) }}" 
+                             alt="{{ t('products.items.' + product.name + '.name') }}" 
+                             class="w-full h-64 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2 rtl-reverse">
+                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
+                                {% set name_key = 'products.items.' + product.name + '.name' %}
+                                {% set translated_name = t(name_key) %}
+                                {{ translated_name if translated_name != name_key else product.name }}
+                            </h2>
+                            {% if current_user.is_authenticated %}
+                            <button onclick="window.location.href='{{ url_for('toggle_favorite', product_id=product.id) }}'"
+                                    class="text-gray-400 hover:text-red-500 focus:outline-none">
+                                <svg class="w-6 h-6 {% if product.id in favorite_ids %}text-red-500{% endif %}" fill="{% if product.id in favorite_ids %}currentColor{% else %}none{% endif %}" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </button>
+                            {% endif %}
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            {% set desc_key = 'products.items.' + product.name + '.description' %}
+                            {% set translated_desc = t(desc_key) %}
+                            {{ translated_desc if translated_desc != desc_key else product.description }}
+                        </p>
+                        <div class="flex justify-between items-center rtl-reverse">
+                            <span class="text-xl font-bold text-blue-600 dark:text-blue-400">${{ "%.2f"|format(product.price) }}</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ t('products.categories.' + product.category) }}</span>
+                        </div>
+                        {% if product.stock > 0 %}
+                        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mt-4">
+                            <div class="flex items-center space-x-2 rtl-reverse">
+                                <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}"
+                                       class="w-20 px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none">
+                                    {{ t('products.add_to_cart') }}
+                                </button>
+                            </div>
+                        </form>
+                        {% else %}
+                        <div class="mt-4 text-red-500 dark:text-red-400">{{ t('products.out_of_stock') }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination Controls -->
+            <div class="mt-8 flex justify-center">
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    {% if products.has_prev %}
+                    <a href="{{ url_for('index', page=products.prev_num, category=current_category) }}" 
+                       class="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                    
+                    {% for page_num in products.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num == products.page %}
+                            <span class="relative inline-flex items-center px-4 py-2 border border-blue-500 bg-blue-50 text-sm font-medium text-blue-600 dark:bg-blue-900 dark:border-blue-400 dark:text-blue-200">
+                                {{ page_num }}
+                            </span>
+                            {% else %}
+                            <a href="{{ url_for('index', page=page_num, category=current_category) }}" 
+                               class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600">
+                                {{ page_num }}
+                            </a>
+                            {% endif %}
+                        {% else %}
+                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                ...
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if products.has_next %}
+                    <a href="{{ url_for('index', page=products.next_num, category=current_category) }}" 
+                       class="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add JavaScript for category toggle -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryToggle = document.getElementById('categoryToggle');
+        const categoryList = document.getElementById('categoryList');
+        const categoryIcon = document.getElementById('categoryIcon');
+        let isOpen = true; // Changed to true to show by default
+
+        // Show categories by default
+        categoryList.classList.remove('hidden');
+        categoryIcon.classList.add('rotate-180');
+
+        categoryToggle.addEventListener('click', function() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                categoryList.classList.remove('hidden');
+                categoryIcon.classList.add('rotate-180');
+            } else {
+                categoryList.classList.add('hidden');
+                categoryIcon.classList.remove('rotate-180');
+            }
+        });
+    });
+</script>
+{% endblock %} 

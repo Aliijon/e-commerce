@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">{{ t('checkout.title') }}</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Order Summary -->
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{{ t('checkout.order_summary') }}</h2>
+                {% for item in cart_items %}
+                    <div class="flex justify-between items-center py-4 border-b border-gray-200 dark:border-gray-700">
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ item.product.name }}</h3>
+                            <p class="text-gray-600 dark:text-gray-300">{{ t('products.quantity') }}: {{ item.quantity }}</p>
+                        </div>
+                        <div class="text-lg font-semibold text-gray-900 dark:text-white">
+                            ${{ "%.2f"|format(item.total) }}
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="mt-6 flex justify-between items-center">
+                    <span class="text-xl font-bold text-gray-900 dark:text-white">{{ t('checkout.total_amount') }}</span>
+                    <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">${{ "%.2f"|format(total) }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Information -->
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{{ t('checkout.payment_info') }}</h2>
+                <form action="{{ url_for('place_order') }}" method="POST" class="space-y-4">
+                    <div>
+                        <label for="card_number" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {{ t('checkout.card_number') }}
+                        </label>
+                        <input type="text" id="card_number" name="card_number" required
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="expiry" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ t('checkout.expiry') }}
+                            </label>
+                            <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="cvv" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ t('checkout.cvv') }}
+                            </label>
+                            <input type="text" id="cvv" name="cvv" required
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    <button type="submit"
+                            class="w-full mt-6 bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">
+                        {{ t('checkout.place_order') }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

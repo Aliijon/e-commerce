@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="{{ t('lang') }}" class="light" dir="{{ 'rtl' if t('lang') == 'fa' else 'ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t('products.title') }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {}
+            }
+        }
+    </script>
+    <style>
+        [dir="rtl"] .rtl-mirror {
+            transform: scaleX(-1);
+        }
+        [dir="rtl"] .rtl-reverse {
+            flex-direction: row-reverse;
+        }
+        [dir="rtl"] .rtl-space-reverse > * + * {
+            margin-right: 0.5rem;
+            margin-left: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-200 min-h-screen flex flex-col">
+    <nav class="bg-blue-600 text-white p-4 dark:bg-blue-800">
+        <div class="container mx-auto">
+            <!-- Title and mobile menu button -->
+            <div class="flex flex-col space-y-4 md:space-y-0">
+                <div class="flex items-center justify-between w-full">
+                    <a href="{{ url_for('index') }}" class="text-2xl font-bold md:hidden">{{ t('products.title') }}</a>
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg hover:bg-blue-700 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Mobile Search Bar (Always visible on mobile) -->
+                <div class="md:hidden w-full">
+                    <form action="{{ url_for('search') }}" method="GET" class="flex rtl-reverse">
+                        <input type="text" name="q" placeholder="{{ t('search.placeholder') }}"
+                               class="w-full px-4 py-2 rounded-l-lg dark:bg-gray-700 dark:text-white focus:outline-none"
+                               value="{{ request.args.get('q', '') }}">
+                        <button type="submit" 
+                                class="px-6 py-2 bg-blue-700 text-white rounded-r-lg hover:bg-blue-800 focus:outline-none">
+                            {{ t('search.button') }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Desktop Layout -->
+            <div class="hidden md:flex items-center justify-between">
+                <a href="{{ url_for('index') }}" class="text-2xl font-bold">{{ t('products.title') }}</a>
+                
+                <!-- Desktop Search Bar -->
+                <div class="w-1/3 mx-4">
+                    <form action="{{ url_for('search') }}" method="GET" class="flex-1 max-w-lg mx-4">
+                        <div class="relative">
+                            <input type="text" name="q" 
+                                   class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
+                                          bg-white dark:bg-gray-700 
+                                          text-gray-800 dark:text-gray-100 
+                                          focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
+                                          placeholder-gray-500 dark:placeholder-gray-400"
+                                   placeholder="{{ t('search.placeholder') }}"
+                                   value="{{ request.args.get('q', '') }}">
+                            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Desktop menu -->
+                <div class="flex items-center space-x-4 rtl-reverse">
+                    <a href="{{ url_for('index') }}" class="hover:text-blue-200">{{ t('nav.home') }}</a>
+                    <a href="{{ url_for('cart') }}" class="hover:text-blue-200">{{ t('nav.cart') }}</a>
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('favorites') }}" class="hover:text-blue-200">{{ t('nav.favorites') }}</a>
+                        <a href="{{ url_for('auth.logout') }}" class="hover:text-blue-200">{{ t('nav.logout') }}</a>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="hover:text-blue-200">{{ t('nav.login') }}</a>
+                        <a href="{{ url_for('auth.register') }}" class="hover:text-blue-200">{{ t('nav.register') }}</a>
+                    {% endif %}
+                    <div class="flex items-center space-x-2 rtl-reverse">
+                        <button id="lang-toggle" class="p-2 rounded-lg hover:bg-blue-700 focus:outline-none flex items-center">
+                            <span id="lang-text" class="text-sm font-medium">{{ t('lang')|upper }}</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                            </svg>
+                        </button>
+                        <button id="theme-toggle" class="p-2 rounded-lg hover:bg-blue-700 focus:outline-none">
+                            <svg id="sun-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+                            </svg>
+                            <svg id="moon-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
+                <a href="{{ url_for('index') }}" class="block py-2 hover:text-blue-200">{{ t('nav.home') }}</a>
+                <a href="{{ url_for('cart') }}" class="block py-2 hover:text-blue-200">{{ t('nav.cart') }}</a>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('favorites') }}" class="block py-2 hover:text-blue-200">{{ t('nav.favorites') }}</a>
+                    <a href="{{ url_for('auth.logout') }}" class="block py-2 hover:text-blue-200">{{ t('nav.logout') }}</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="block py-2 hover:text-blue-200">{{ t('nav.login') }}</a>
+                    <a href="{{ url_for('auth.register') }}" class="block py-2 hover:text-blue-200">{{ t('nav.register') }}</a>
+                {% endif %}
+                <div class="flex items-center space-x-2 py-2 rtl-reverse">
+                    <button id="mobile-lang-toggle" class="w-full text-left py-2 hover:text-blue-200">
+                        <span class="flex items-center rtl-reverse">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                            </svg>
+                            <span id="mobile-lang-text">{{ t('lang')|upper }}</span>
+                        </span>
+                    </button>
+                    <button id="mobile-theme-toggle" class="w-full text-left py-2 hover:text-blue-200">
+                        <span class="flex items-center rtl-reverse">
+                            <svg id="mobile-sun-icon" class="w-6 h-6 hidden mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+                            </svg>
+                            <svg id="mobile-moon-icon" class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                            </svg>
+                            <span>{{ t('nav.toggle_theme') }}</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        <div class="container mx-auto mt-8 px-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-4 p-4 rounded {% if category == 'error' %}bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100{% else %}bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-8 py-4 dark:bg-gray-900">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 {{ t('products.title') }}. {{ t('footer.rights') }}</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Language toggle
+        function toggleLanguage() {
+            const currentLang = document.documentElement.lang;
+            const newLang = currentLang === 'fa' ? 'en' : 'fa';
+            window.location.href = "{{ url_for('set_language', lang='') }}" + newLang;
+        }
+
+        document.getElementById('lang-toggle').addEventListener('click', toggleLanguage);
+        document.getElementById('mobile-lang-toggle').addEventListener('click', toggleLanguage);
+
+        // Theme handling
+        function updateTheme(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+                document.querySelectorAll('#sun-icon, #mobile-sun-icon').forEach(el => el.classList.remove('hidden'));
+                document.querySelectorAll('#moon-icon, #mobile-moon-icon').forEach(el => el.classList.add('hidden'));
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+                document.querySelectorAll('#sun-icon, #mobile-sun-icon').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('#moon-icon, #mobile-moon-icon').forEach(el => el.classList.remove('hidden'));
+            }
+        }
+
+        // Check for saved theme preference, otherwise use system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            updateTheme(true);
+        } else {
+            updateTheme(false);
+        }
+
+        // Theme toggle button handlers
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            updateTheme(!document.documentElement.classList.contains('dark'));
+        });
+
+        document.getElementById('mobile-theme-toggle').addEventListener('click', function() {
+            updateTheme(!document.documentElement.classList.contains('dark'));
+        });
+
+        // Handle system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!('theme' in localStorage)) {
+                updateTheme(e.matches);
+            }
+        });
+    </script>
+</body>
+</html> 
