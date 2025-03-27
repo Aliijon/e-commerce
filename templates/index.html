@@ -42,7 +42,7 @@
         <div class="lg:w-3/4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {% for product in products.items %}
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                <div id="product-{{ product.name }}" class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                     <div class="aspect-w-16 aspect-h-9">
                         <img src="{{ url_for('static', filename='images/' + product.image_url.split('/')[-1]) }}" 
                              alt="{{ t('products.items.' + product.name + '.name') }}" 
@@ -74,10 +74,13 @@
                             <span class="text-sm text-gray-500 dark:text-gray-400">{{ t('products.categories.' + product.category) }}</span>
                         </div>
                         <div class="mt-4 flex space-x-2 rtl-reverse">
-                            <a href="{{ product.contact_whatsapp }}" target="_blank" class="flex-1 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none text-center">
+                            {% set product_url = request.url_root.rstrip('/') + url_for('index') + '#product-' + product.name %}
+                            {% set whatsapp_message = "Hi! I'm interested in: " + t('products.items.' + product.name + '.name') + "\nPrice: $" + "%.2f"|format(product.price) + "\nProduct Link: " + product_url %}
+                            {% set telegram_message = "Hi! I'm interested in: " + t('products.items.' + product.name + '.name') + "\nPrice: $" + "%.2f"|format(product.price) + "\nProduct Link: " + product_url %}
+                            <a href="https://wa.me/93771749100?text={{ whatsapp_message|urlencode }}" target="_blank" class="flex-1 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none text-center">
                                 <i class="fab fa-whatsapp mr-2"></i>{{ t('products.contact_whatsapp') }}
                             </a>
-                            <a href="{{ product.contact_telegram }}" target="_blank" class="flex-1 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none text-center">
+                            <a href="https://t.me/Alijanelyasi?text={{ telegram_message|urlencode }}" target="_blank" class="flex-1 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none text-center">
                                 <i class="fab fa-telegram mr-2"></i>{{ t('products.contact_telegram') }}
                             </a>
                         </div>
