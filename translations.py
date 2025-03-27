@@ -45,23 +45,23 @@ translations = {
             'categories': {
                 'title': 'Categories',
                 'all': 'All Products',
-                'Soccer': 'Soccer',
-                'Basketball': 'Basketball',
-                'Tennis': 'Tennis',
-                'Fitness': 'Fitness',
-                'Volleyball': 'Volleyball',
-                'Yoga': 'Yoga',
-                'Boxing': 'Boxing',
-                'Running': 'Running',
-                'Cycling': 'Cycling',
-                'Swimming': 'Swimming',
-                'Badminton': 'Badminton',
-                'Table Tennis': 'Table Tennis',
-                'Golf': 'Golf',
-                'Climbing': 'Climbing',
-                'Skateboarding': 'Skateboarding'
+                'shoes': 'Shoes',
+                'clothing': 'Clothing',
+                'equipment': 'Equipment'
             },
             'items': {
+                'sports_shoe_1': {
+                    'name': 'Professional Sports Shoe',
+                    'description': 'High quality sports shoe perfect for professional athletes'
+                },
+                'sports_shoe_2': {
+                    'name': 'Elite Running Shoe',
+                    'description': 'Professional running shoe designed for maximum performance'
+                },
+                'sports_shirt_1': {
+                    'name': 'Performance Sports Shirt',
+                    'description': 'Breathable sports shirt made with advanced moisture-wicking technology'
+                },
                 'Elite Pro Training Ball': {
                     'name': 'Elite Pro Training Ball',
                     'description': 'Professional-grade training ball with enhanced grip and durability.'
@@ -280,23 +280,23 @@ translations = {
             'categories': {
                 'title': 'دسته‌بندی‌ها',
                 'all': 'همه محصولات',
-                'Soccer': 'فوتبال',
-                'Basketball': 'بسکتبال',
-                'Tennis': 'تنیس',
-                'Fitness': 'تناسب اندام',
-                'Volleyball': 'والیبال',
-                'Yoga': 'یوگا',
-                'Boxing': 'بوکس',
-                'Running': 'دویدن',
-                'Cycling': 'دوچرخه‌سواری',
-                'Swimming': 'شنا',
-                'Badminton': 'بدمینتون',
-                'Table Tennis': 'پینگ پنگ',
-                'Golf': 'گلف',
-                'Climbing': 'کوهنوردی',
-                'Skateboarding': 'اسکیت‌بورد'
+                'shoes': 'کفش',
+                'clothing': 'پوشاک',
+                'equipment': 'تجهیزات'
             },
             'items': {
+                'sports_shoe_1': {
+                    'name': 'کفش ورزشی حرفه‌ای',
+                    'description': 'کفش ورزشی با کیفیت بالا مناسب برای ورزشکاران حرفه‌ای'
+                },
+                'sports_shoe_2': {
+                    'name': 'کفش دویدن حرفه‌ای',
+                    'description': 'کفش دویدن حرفه‌ای طراحی شده برای عملکرد بهینه'
+                },
+                'sports_shirt_1': {
+                    'name': 'تیشرت ورزشی حرفه‌ای',
+                    'description': 'تیشرت ورزشی تنفس‌پذیر با تکنولوژی پیشرفته جذب رطوبت'
+                },
                 'Elite Pro Training Ball': {
                     'name': 'توپ تمرینی حرفه‌ای',
                     'description': 'توپ تمرینی با کیفیت حرفه‌ای با گریپ و دوام بالا'

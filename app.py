@@ -1,9 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from flask_login import current_user
+from flask_login import current_user, LoginManager
 from config import Config
-from extensions import db, login_manager, migrate, init_login_manager
+from extensions import db, migrate, login_manager, init_login_manager
 from translations import translations
-from models import Product
+from models import Product, User
+from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
 
 def create_app():
     app = Flask(__name__)
@@ -30,7 +36,51 @@ def create_app():
         # Create tables
         db.create_all()
 
+        # Add sample data if the database is empty
+        if not Product.query.first():
+            add_sample_data()
+
     return app
+
+def add_sample_data():
+    # Sample products data
+    products = [
+        {
+            'name': 'sports_shoe_1',
+            'description': 'High quality sports shoe',
+            'price': 89.99,
+            'stock': 10,
+            'image_url': 'images/IMG-20241118-WA0023.jpg',
+            'category': 'shoes'
+        },
+        {
+            'name': 'sports_shoe_2',
+            'description': 'Professional running shoe',
+            'price': 129.99,
+            'stock': 8,
+            'image_url': 'images/IMG-20241118-WA0017.jpg',
+            'category': 'shoes'
+        },
+        {
+            'name': 'sports_shirt_1',
+            'description': 'Breathable sports shirt',
+            'price': 34.99,
+            'stock': 15,
+            'image_url': 'images/IMG-20241014-WA0032.jpg',
+            'category': 'clothing'
+        },
+        # Add more sample products as needed
+    ]
+
+    for product_data in products:
+        product = Product(**product_data)
+        db.session.add(product)
+    
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error adding sample data: {e}")
 
 app = create_app()
 
