@@ -1,6 +1,9 @@
 translations = {
     'en': {
-        'lang': 'en',
+        'site': {
+            'title': 'Sports Store',
+            'rights': 'All rights reserved.'
+        },
         'nav': {
             'home': 'Home',
             'cart': 'Cart',
@@ -9,7 +12,8 @@ translations = {
             'register': 'Register',
             'logout': 'Logout',
             'toggle_theme': 'Toggle Theme',
-            'search': 'Search'
+            'search': 'Search',
+            'search_placeholder': 'Search products...'
         },
         'auth': {
             'login': 'Login',
@@ -225,7 +229,18 @@ translations = {
             'error': 'An error occurred. Please try again.'
         },
         'footer': {
-            'rights': 'All rights reserved.'
+            'about': 'About Us',
+            'description': 'Your one-stop shop for quality sports equipment and accessories.',
+            'contact': 'Contact Us',
+            'email': 'Email: info@sportsstore.com',
+            'phone': 'Phone: +93 771 749 100',
+            'follow': 'Follow Us',
+            'rights': 'All rights reserved.',
+            'social': {
+                'facebook': 'Follow us on Facebook',
+                'twitter': 'Follow us on Twitter',
+                'instagram': 'Follow us on Instagram'
+            }
         },
         'search': {
             'placeholder': 'Search products...',
@@ -237,7 +252,10 @@ translations = {
         }
     },
     'fa': {
-        'lang': 'fa',
+        'site': {
+            'title': 'فروشگاه ورزشی',
+            'rights': 'تمامی حقوق محفوظ است.'
+        },
         'nav': {
             'home': 'خانه',
             'cart': 'سبد خرید',
@@ -246,7 +264,8 @@ translations = {
             'register': 'ثبت نام',
             'logout': 'خروج',
             'toggle_theme': 'تغییر تم',
-            'search': 'جستجو'
+            'search': 'جستجو',
+            'search_placeholder': 'جستجوی محصولات...'
         },
         'auth': {
             'login': 'ورود',
@@ -462,7 +481,18 @@ translations = {
             'error': 'خطایی رخ داد. لطفا دوباره تلاش کنید.'
         },
         'footer': {
-            'rights': 'تمامی حقوق محفوظ است.'
+            'about': 'درباره ما',
+            'description': 'فروشگاه کامل تجهیزات و لوازم ورزشی با کیفیت',
+            'contact': 'تماس با ما',
+            'email': 'ایمیل: info@sportsstore.com',
+            'phone': 'تلفن: ۱۰۰ ۷۴۹ ۷۷۱ ۹۳+',
+            'follow': 'ما را دنبال کنید',
+            'rights': 'تمامی حقوق محفوظ است.',
+            'social': {
+                'facebook': 'ما را در فیسبوک دنبال کنید',
+                'twitter': 'ما را در توییتر دنبال کنید',
+                'instagram': 'ما را در اینستاگرام دنبال کنید'
+            }
         },
         'search': {
             'placeholder': 'جستجوی محصولات...',
