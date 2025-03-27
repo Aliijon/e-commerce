@@ -33,18 +33,23 @@ class User(UserMixin, db.Model):
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    description = db.Column(db.Text, nullable=False)
     price = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer, nullable=False, default=0)
-    image_url = db.Column(db.String(200))
-    category = db.Column(db.String(50))
-    contact_whatsapp = db.Column(db.String(200))
-    contact_telegram = db.Column(db.String(200))
+    image_url = db.Column(db.String(200), nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    whatsapp = db.Column(db.String(20), nullable=False)  # Add WhatsApp contact
+    telegram = db.Column(db.String(50), nullable=False)  # Add Telegram username
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
     favorited_by = db.relationship('Favorite', backref='product', lazy=True)
     order_items = db.relationship('OrderItem', backref='product', lazy=True)
+
+    def __repr__(self):
+        return f'<Product {self.name}>'
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
